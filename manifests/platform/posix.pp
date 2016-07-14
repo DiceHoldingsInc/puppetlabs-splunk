@@ -39,6 +39,13 @@ class splunk::platform::posix (
     creates => '/etc/init.d/splunk',
     require => Exec['license_splunkforwarder'],
     tag     => 'splunk_forwarder',
+  }
+  @exec { 'stop_splunkforwarder':
+
+    # Systemd won't correctly detect that splunk is already running and restart, so we need to kill it and start with systemd
+    command => "${splunk::params::forwarder_dir}/bin/splunk stop",
+    require => Exec['enable_splunkforwarder'],
+    tag     => 'splunk_forwarder',
     notify  => Service['splunk'],
   }
 
